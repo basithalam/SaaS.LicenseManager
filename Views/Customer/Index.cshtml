@@ -1,0 +1,125 @@
+﻿@model IEnumerable<SaaS.LicenseManager.Models.Customer>
+
+@* Modern UI using Bootstrap 5 and jQuery *@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: #f0f8ff !important;
+        transition: background 0.3s;
+    }
+
+    .expire-form input[type="date"] {
+        max-width: 150px;
+        display: inline-block;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0 text-primary">
+            <i class="bi bi-people-fill me-2"></i>Registered Customers
+        </h2>
+        <div>
+            <a class="btn btn-primary btn-lg shadow me-2" asp-action="Create">
+                <i class="bi bi-person-plus-fill me-1"></i> Add Customer
+            </a>
+            <form asp-controller="Admin" asp-action="Logout" method="post" class="d-inline">
+                <button type="submit" class="btn btn-outline-danger btn-lg shadow">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <form method="get" class="row g-3 mb-4 bg-light rounded-3 p-3 shadow-sm align-items-end">
+        <div class="col-md-3">
+            <label class="form-label fw-semibold text-secondary">Name</label>
+            <input type="text" name="searchName" value="@(Context.Request.Query["searchName"])" class="form-control" placeholder="Search by Name" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-semibold text-secondary">Country</label>
+            <input type="text" name="searchCountry" value="@(Context.Request.Query["searchCountry"])" class="form-control" placeholder="Search by Country" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-semibold text-secondary">License Key</label>
+            <input type="text" name="searchKey" value="@(Context.Request.Query["searchKey"])" class="form-control" placeholder="Search by License Key" />
+        </div>
+        <div class="col-md-3 d-grid">
+            <button type="submit" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </div>
+    </form>
+
+    <div class="table-responsive shadow rounded-3">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-primary">
+                <tr>
+                    <th><i class="bi bi-person"></i> Name</th>
+                    <th><i class="bi bi-envelope"></i> Email</th>
+                    <th><i class="bi bi-geo-alt"></i> Country</th>
+                    <th><i class="bi bi-key"></i> License Key</th>
+                    <th><i class="bi bi-check-circle"></i> Status</th>
+                    <th><i class="bi bi-award"></i> License Type</th>
+                    <th><i class="bi bi-calendar-x"></i> Expire</th>
+                    <th><i class="bi bi-gear"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@c.FullName</td>
+                        <td>@c.EmailAddress</td>
+                        <td>@c.Country</td>
+                        <td>
+                            <span class="badge bg-secondary fs-6">@c.LicenseKey</span>
+                        </td>
+                        <td>
+                            @if (c.IsActive)
+                            {
+                                <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Disabled</span>
+                            }
+                        </td>
+                        <td>
+                            <span class="badge bg-info text-dark">@c.LicenseType</span>
+                        </td>
+                        <td>
+                            <form asp-action="UpdateExpire" asp-route-id="@c.Id" method="post" class="d-inline expire-form">
+                                <input type="date" name="newExpire" class="form-control form-control-sm d-inline" value="@c.LicenseEnd.ToString("yyyy-MM-dd")" />
+                                <button type="submit" class="btn btn-sm btn-outline-primary ms-1" title="Update Expire">
+                                    <i class="bi bi-save"></i>
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <form asp-action="Toggle" asp-route-id="@c.Id" method="post" class="d-inline toggle-form">
+                                <button type="submit" class="btn btn-sm @(c.IsActive ? "btn-danger" : "btn-success") shadow-sm">
+                                    <i class="bi @(c.IsActive ? "bi-person-x-fill" : "bi-person-check-fill")"></i>
+                                    @(c.IsActive ? "Disable" : "Enable")
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        // Fade effect on status toggle
+        $(".toggle-form").on("submit", function (e) {
+            var row = $(this).closest("tr");
+            row.fadeTo(200, 0.3);
+        });
+    });
+</script>

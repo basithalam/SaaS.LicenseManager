@@ -1,0 +1,52 @@
+﻿/* General background and card styles */
+body {
+    background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+    min-height: 100vh;
+}
+
+.card {
+    border-radius: 1.25rem;
+}
+
+.card-header {
+    border-top-left-radius: 1.25rem;
+    border-top-right-radius: 1.25rem;
+    background: linear-gradient(90deg, #6366f1 0%, #3b82f6 100%);
+}
+
+.form-label {
+    font-weight: 500;
+    color: #374151;
+}
+
+.btn-success {
+    background: linear-gradient(90deg, #22d3ee 0%, #6366f1 100%);
+    border: none;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+    .btn-success:hover {
+        background: linear-gradient(90deg, #6366f1 0%, #22d3ee 100%);
+    }
+
+.form-control:focus, .form-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 0.2rem rgba(99,102,241,.15);
+}
+
+.form-floating label {
+    color: #6b7280;
+}
+/* Table hover for index page */
+.table-hover tbody tr:hover {
+    background-color: #f0f8ff !important;
+    transition: background 0.3s;
+}
+/* Expire form input */
+.expire-form input[type="date"] {
+    max-width: 150px;
+    display: inline-block;
+}
+
+
