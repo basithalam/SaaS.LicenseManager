@@ -1,4 +1,4 @@
-﻿$(function () {
+$(function () {
     // Animate card on load (for login/register/create)
     $('.card').hide().fadeIn(700);
 

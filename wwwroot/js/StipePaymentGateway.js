@@ -1,9 +1,19 @@
 ﻿// stripe-checkout.js
 
 // Initialize Stripe with your publishable key
-const stripe = Stripe('pk_test_YOUR_PUBLISHABLE_KEY'); // Replace with your actual key
+let stripe;
 
 document.addEventListener("DOMContentLoaded", function () {
+    fetch('/Customer/GetStripePublishableKey')
+        .then(response => response.json())
+        .then(data => {
+            stripe = Stripe(data.publishableKey);
+        })
+        .catch(error => {
+            console.error('Error fetching Stripe publishable key:', error);
+            document.getElementById('payment-message').innerText = 'Error initializing payment. Please try again.';
+        });
+
     const licenseType = document.getElementById('LicenseType');
     const paymentSection = document.getElementById('payment-section');
     const checkoutBtn = document.getElementById('stripe-checkout-btn');

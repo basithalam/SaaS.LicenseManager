@@ -5,6 +5,7 @@ using SaaS.LicenseManager.Helpers;
 using SaaS.LicenseManager.Models;
 using SaaS.LicenseManager.Services;
 using Stripe.Checkout;
+using Microsoft.Extensions.Options;
 
 namespace SaaS.LicenseManager.Controllers
 {
@@ -12,11 +13,13 @@ namespace SaaS.LicenseManager.Controllers
     {
         private readonly AppDbContext _context;
         private readonly EmailService _emailService;
+        private readonly StripeSettings _stripeSettings;
 
-        public CustomerController(AppDbContext context, EmailService emailService)
+        public CustomerController(AppDbContext context, EmailService emailService, IOptions<StripeSettings> stripeSettings)
         {
             _context = context;
             _emailService = emailService;
+            _stripeSettings = stripeSettings.Value;
         }
 
         [AdminAuthorize]
@@ -110,11 +113,22 @@ namespace SaaS.LicenseManager.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public IActionResult GetStripePublishableKey()
+        {
+            return Json(new { publishableKey = _stripeSettings.PublishableKey });
+        }
 
         // Create stripe session
         [HttpPost]
         public async Task<IActionResult> CreateStripeSession([FromBody] StripeSessionRequest req)
         {
+            // Basic email validation
+            if (string.IsNullOrWhiteSpace(req.Email) || !System.Text.RegularExpressions.Regex.IsMatch(req.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            {
+                return BadRequest(new { error = "Invalid email address format." });
+            }
+
             // Set license prices in USD
             decimal monthlyPrice = 10.00M;
             decimal yearlyPrice = 100.00M;
