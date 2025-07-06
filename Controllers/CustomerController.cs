@@ -46,28 +46,39 @@ namespace SaaS.LicenseManager.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Customer customer)
         {
-            customer.LicenseKey = LicenseKeyGenerator.GenerateKey(customer.EmailAddress);
-            customer.LicenseStart = DateTime.UtcNow;
-            _emailService.SendLicenseEmail(customer.EmailAddress, customer.LicenseKey);
-
-            switch (customer.LicenseType)
+            if (ModelState.IsValid)
             {
-                case LicenseType.Trial7Days:
-                    customer.LicenseEnd = customer.LicenseStart.AddDays(7); break;
-                case LicenseType.Monthly:
-                    customer.LicenseEnd = customer.LicenseStart.AddMonths(1); break;
-                case LicenseType.Yearly:
-                    customer.LicenseEnd = customer.LicenseStart.AddYears(1); break;
+                // Check if email already exists
+                if (await _context.Customers.AnyAsync(c => c.EmailAddress == customer.EmailAddress))
+                {
+                    ModelState.AddModelError("EmailAddress", "This email address is already registered.");
+                    return View(customer);
+                }
+
+                customer.LicenseKey = LicenseKeyGenerator.GenerateKey(customer.EmailAddress);
+                customer.LicenseStart = DateTime.UtcNow;
+                _emailService.SendLicenseEmail(customer.EmailAddress, customer.LicenseKey);
+
+                switch (customer.LicenseType)
+                {
+                    case LicenseType.Trial7Days:
+                        customer.LicenseEnd = customer.LicenseStart.AddDays(7); break;
+                    case LicenseType.Monthly:
+                        customer.LicenseEnd = customer.LicenseStart.AddMonths(1); break;
+                    case LicenseType.Yearly:
+                        customer.LicenseEnd = customer.LicenseStart.AddYears(1); break;
+                }
+
+                customer.IsActive = true;
+
+                _context.Customers.Add(customer);
+                await _context.SaveChangesAsync();
+
+                // Email logic will go here (in next step)
+
+                return RedirectToAction(nameof(Index));
             }
-
-            customer.IsActive = true;
-
-            _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
-
-            // Email logic will go here (in next step)
-
-            return RedirectToAction(nameof(Index));
+            return View(customer);
         }
 
         // Toggle activation status
@@ -93,6 +104,8 @@ namespace SaaS.LicenseManager.Controllers
 
             customer.LicenseEnd = newExpire;
             await _context.SaveChangesAsync();
+
+            _emailService.SendLicenseValidityUpdateEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd);
 
             return RedirectToAction(nameof(Index));
         }
@@ -136,6 +149,18 @@ namespace SaaS.LicenseManager.Controllers
             var service = new SessionService();
             Session session = await service.CreateAsync(options);
             return Json(new { sessionId = session.Id });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var customer = await _context.Customers.FindAsync(id);
+            if (customer == null) return NotFound();
+
+            _context.Customers.Remove(customer);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 

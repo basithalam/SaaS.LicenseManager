@@ -30,5 +30,22 @@ namespace SaaS.LicenseManager.Services
 
             client.Send(mail);
         }
+
+        public void SendLicenseValidityUpdateEmail(string toEmail, string licenseKey, DateTime newExpireDate)
+        {
+            using var client = new SmtpClient(_settings.SmtpServer, _settings.Port)
+            {
+                EnableSsl = true,
+                Credentials = new NetworkCredential(_settings.SenderEmail, _settings.Password)
+            };
+
+            var mail = new MailMessage(_settings.SenderEmail, toEmail)
+            {
+                Subject = "Your License Validity Has Been Updated",
+                Body = $"Hello!\n\nYour license (Key: {licenseKey}) validity has been updated.\nYour new license expiry date is: {newExpireDate.ToShortDateString()}\n\nThank you!"
+            };
+
+            client.Send(mail);
+        }
     }
 }

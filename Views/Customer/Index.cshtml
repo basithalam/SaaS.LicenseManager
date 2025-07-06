@@ -63,7 +63,7 @@
                     <th><i class="bi bi-geo-alt"></i> Country</th>
                     <th><i class="bi bi-key"></i> License Key</th>
                     <th><i class="bi bi-check-circle"></i> Status</th>
-                    <th><i class="bi bi-award"></i> License Type</th>
+                    <th><i class="bi bi-award"></i>Type</th>
                     <th><i class="bi bi-calendar-x"></i> Expire</th>
                     <th><i class="bi bi-gear"></i> Actions</th>
                 </tr>
@@ -105,6 +105,13 @@
                                     <i class="bi @(c.IsActive ? "bi-person-x-fill" : "bi-person-check-fill")"></i>
                                     @(c.IsActive ? "Disable" : "Enable")
                                 </button>
+                            </form>
+                            <form asp-action="Delete" asp-route-id="@c.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this customer?');">
+                                <form asp-action="Delete" asp-route-id="@c.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this customer?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger shadow-sm ms-1">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </form>
                             </form>
                         </td>
                     </tr>
