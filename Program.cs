@@ -49,8 +49,7 @@ app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Customer}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Customer}/{action=Index}/{id?}");
 
 
 app.Run();

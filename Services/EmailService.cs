@@ -25,7 +25,7 @@ namespace SaaS.LicenseManager.Services
             var mail = new MailMessage(_settings.SenderEmail, toEmail)
             {
                 Subject = "Your License Key",
-                Body = $"Hello!\n\nHere is your license key:\n{licenseKey}\n\nThank you for registering!"
+                Body = $"Hello User!\n\nHere is your license key:\n{licenseKey}\n\nThank you for registering!"
             };
 
             client.Send(mail);
@@ -42,7 +42,7 @@ namespace SaaS.LicenseManager.Services
             var mail = new MailMessage(_settings.SenderEmail, toEmail)
             {
                 Subject = "Your License Validity Has Been Updated",
-                Body = $"Hello!\n\nYour license (Key: {licenseKey}) validity has been updated.\nYour new license expiry date is: {newExpireDate.ToShortDateString()}\n\nThank you!"
+                Body = $"Hello User!\n\nYour license (Key: {licenseKey}) validity has been updated.\nYour new license expiry date is: {newExpireDate.ToShortDateString()}\n\nThank you!"
             };
 
             client.Send(mail);

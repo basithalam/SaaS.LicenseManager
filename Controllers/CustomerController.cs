@@ -24,15 +24,15 @@ namespace SaaS.LicenseManager.Controllers
 
         [AdminAuthorize]
 
-        public async Task<IActionResult> Index(string searchName, string searchCountry, string searchKey)
+        public async Task<IActionResult> Index(string searchName, string searchEmail, string searchKey)
         {
             var query = _context.Customers.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchName))
                 query = query.Where(c => c.FullName.Contains(searchName));
 
-            if (!string.IsNullOrWhiteSpace(searchCountry))
-                query = query.Where(c => c.Country.Contains(searchCountry));
+            if (!string.IsNullOrWhiteSpace(searchEmail))
+                query = query.Where(c => c.EmailAddress.Contains(searchEmail));
 
             if (!string.IsNullOrWhiteSpace(searchKey))
                 query = query.Where(c => c.LicenseKey.Contains(searchKey));
