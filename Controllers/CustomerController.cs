@@ -113,10 +113,45 @@ namespace SaaS.LicenseManager.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // View Action 
+        public async Task<IActionResult> View(int id)
+        {
+            if (id == 0)
+            {
+                return BadRequest(); // or RedirectToAction("Index");
+            }
+
+            var entity = await _context.Customers
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            return View(entity); // This returns the View.cshtml and passes the entity as model
+        }
+
+
         [HttpGet]
         public IActionResult GetStripePublishableKey()
         {
             return Json(new { publishableKey = _stripeSettings.PublishableKey });
+        }
+
+        // Plan price
+        [HttpGet]
+        public async Task<IActionResult> GetStripePrices()
+        {
+            // Hardcoded prices as requested
+            decimal monthlyPrice = 10.00M;
+            decimal yearlyPrice = 100.00M;
+
+            return Json(new
+            {
+                monthly = monthlyPrice,
+                yearly = yearlyPrice
+            });
         }
 
         // Create stripe session

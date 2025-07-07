@@ -1,0 +1,70 @@
+@model SaaS.LicenseManager.Models.Customer
+
+@{ 
+    ViewData["Title"] = "Customer Details";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header text-white text-center py-4">
+                    <h2><i class="bi bi-person-badge"></i> Customer Details</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Full Name:</strong></div>
+                        <div class="col-sm-8">@Model.FullName</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Email:</strong></div>
+                        <div class="col-sm-8">@Model.EmailAddress</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Country:</strong></div>
+                        <div class="col-sm-8">@Model.Country</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Phone Number:</strong></div>
+                        <div class="col-sm-8">@Model.PhoneNumber</div>
+                    </div>
+                    <hr />
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>License Key:</strong></div>
+                        <div class="col-sm-8"><span class="badge bg-secondary fs-6">@Model.LicenseKey</span></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>License Type:</strong></div>
+                        <div class="col-sm-8"><span class="badge bg-info text-dark">@Model.LicenseType</span></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Status:</strong></div>
+                        <div class="col-sm-8">
+                            @if (Model.IsActive)
+                            {
+                                <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i> Disabled</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>License Start:</strong></div>
+                        <div class="col-sm-8">@Model.LicenseStart.ToShortDateString()</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>License End:</strong></div>
+                        <div class="col-sm-8">@Model.LicenseEnd.ToShortDateString()</div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

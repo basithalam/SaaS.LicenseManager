@@ -60,7 +60,7 @@
                 <tr>
                     <th><i class="bi bi-person"></i> Name</th>
                     <th><i class="bi bi-envelope"></i> Email</th>
-                    <th><i class="bi bi-geo-alt"></i> Country</th>
+                    @* <th><i class="bi bi-geo-alt"></i> Country</th> *@
                     <th><i class="bi bi-key"></i> License Key</th>
                     <th><i class="bi bi-check-circle"></i> Status</th>
                     <th><i class="bi bi-award"></i>Type</th>
@@ -74,7 +74,7 @@
                     <tr>
                         <td class="fw-semibold">@c.FullName</td>
                         <td>@c.EmailAddress</td>
-                        <td>@c.Country</td>
+                        @* <td>@c.Country</td> *@
                         <td>
                             <span class="badge bg-secondary fs-6">@c.LicenseKey</span>
                         </td>
@@ -100,16 +100,18 @@
                             </form>
                         </td>
                         <td>
+                            <a asp-action="View" asp-route-id="@c.Id" class="btn btn-sm btn-outline-info me-1" title="View Details">
+                                <i class="bi bi-eye"></i>
+                            </a>
                             <form asp-action="Toggle" asp-route-id="@c.Id" method="post" class="d-inline toggle-form">
-                                <button type="submit" class="btn btn-sm @(c.IsActive ? "btn-danger" : "btn-success") shadow-sm">
+                                <button type="submit" class="btn btn-sm @(c.IsActive ? "btn-danger" : "btn-success") shadow-sm" title="@(c.IsActive ? "Disable" : "Enable")">
                                     <i class="bi @(c.IsActive ? "bi-person-x-fill" : "bi-person-check-fill")"></i>
-                                    @(c.IsActive ? "Disable" : "Enable")
                                 </button>
                             </form>
                             <form asp-action="Delete" asp-route-id="@c.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this customer?');">
                                 <form asp-action="Delete" asp-route-id="@c.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this customer?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger shadow-sm ms-1">
-                                    <i class="bi bi-trash"></i> Delete
+                                <button type="submit" class="btn btn-sm btn-outline-danger shadow-sm ms-1" title="Delete">
+                                    <i class="bi bi-trash"></i>
                                 </button>
                             </form>
                             </form>

@@ -2,6 +2,8 @@
 
 // Initialize Stripe with your publishable key
 let stripe;
+let monthlyPriceDisplay = document.getElementById('monthly-price');
+let yearlyPriceDisplay = document.getElementById('yearly-price');
 
 document.addEventListener("DOMContentLoaded", function () {
     fetch('/Customer/GetStripePublishableKey')
@@ -14,10 +16,26 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById('payment-message').innerText = 'Error initializing payment. Please try again.';
         });
 
+    // Fetch and display prices
+    fetch('/Customer/GetStripePrices')
+        .then(response => response.json())
+        .then(data => {
+            if (data.monthly) {
+                monthlyPriceDisplay.innerText = `${data.monthly.toFixed(2)}`;
+            }
+            if (data.yearly) {
+                yearlyPriceDisplay.innerText = `${data.yearly.toFixed(2)}`;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching Stripe prices:', error);
+            document.getElementById('payment-message').innerText = 'Error fetching prices. Please try again.';
+        });
+
     const licenseType = document.getElementById('LicenseType');
     const paymentSection = document.getElementById('payment-section');
     const checkoutBtn = document.getElementById('stripe-checkout-btn');
-    const registerBtn = document.querySelector('button[type="submit"].btn-success');
+    const registerBtn = document.getElementById('register-btn'); // Use the new ID
 
     function updatePaymentUI() {
         if (licenseType.value === 'Monthly' || licenseType.value === 'Yearly') {

@@ -27,7 +27,7 @@
                             <label class="form-label">Phone Number</label>
                             <div class="input-group">
                                 <select id="CountryCode" class="form-select" style="max-width: 150px;">
-                                    <option value="" disabled selected>Code</option>
+                                    <option value="" disabled selected>Country Code</option>
                                 </select>
                                 <input id="PhoneNumberInput" type="tel" class="form-control" placeholder="Enter phone number" required />
                             </div>
@@ -51,13 +51,23 @@
                         </div>
                         <div id="payment-section" style="display:none;">
                             <hr />
-                            <h5>Payment Required</h5>
-                            <button id="stripe-checkout-btn" type="button" class="btn btn-primary w-100 mb-2">
-                                <i class="bi bi-credit-card"></i> Pay with Card
+                            <h5 class="mb-3">Select Your Plan:</h5>
+                            <div class="d-flex justify-content-around mb-4">
+                                <div class="text-center">
+                                    <h4 class="text-primary">Monthly</h4>
+                                    <p class="lead" id="monthly-price">Loading...</p>
+                                </div>
+                                <div class="text-center">
+                                    <h4 class="text-primary">Yearly</h4>
+                                    <p class="lead" id="yearly-price">Loading...</p>
+                                </div>
+                            </div>
+                            <button id="stripe-checkout-btn" type="button" class="btn btn-primary w-100 py-2 mb-2">
+                                <i class="bi bi-credit-card"></i> Proceed to Payment
                             </button>
-                            <div id="payment-message" class="text-danger"></div>
+                            <div id="payment-message" class="text-danger text-center mt-2"></div>
                         </div>
-                        <button type="submit" class="btn btn-success w-100 py-2 mb-2">
+                        <button id="register-btn" type="submit" class="btn btn-success w-100 py-2 mb-2">
                             <i class="bi bi-check-circle"></i> Register
                         </button>
                     </form>
