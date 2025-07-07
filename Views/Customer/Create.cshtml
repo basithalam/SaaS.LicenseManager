@@ -23,9 +23,15 @@
                             <label asp-for="Country"></label>
                             <span asp-validation-for="Country" class="text-danger"></span>
                         </div>
-                        <div class="form-floating mb-3">
-                            <input asp-for="PhoneNumber" class="form-control" id="PhoneNumber" placeholder="Phone Number" required />
-                            <label asp-for="PhoneNumber"></label>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <div class="input-group">
+                                <select id="CountryCode" class="form-select" style="max-width: 150px;">
+                                    <option value="" disabled selected>Code</option>
+                                </select>
+                                <input id="PhoneNumberInput" type="tel" class="form-control" placeholder="Enter phone number" required />
+                            </div>
+                            <input asp-for="PhoneNumber" type="hidden" />
                             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                         </div>
                         <div class="form-floating mb-3">
@@ -65,5 +71,7 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/app-custom.js" asp-append-version="true"></script>
+    <script src="~/js/country-codes.js" asp-append-version="true"></script>
+    <script src="~/js/create-customer.js" asp-append-version="true"></script>
     <script src="~/js/StipePaymentGateway.js" asp-append-version="true"></script>
 }
