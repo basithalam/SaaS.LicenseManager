@@ -1,0 +1,42 @@
+@model SaaS.LicenseManager.Models.AdminUser
+
+@{ ViewData["Title"] = "Admin Profile"; }
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header text-white text-center py-4 bg-primary">
+                    <h2 class="mb-1"><i class="bi bi-person-circle"></i> Admin Profile</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Username:</label>
+                        <p class="form-control-static">@Model.Username</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Email:</label>
+                        <p class="form-control-static">@Model.Email</p>
+                    </div>
+
+                    <h4 class="mb-3 text-primary"><i class="bi bi-key"></i> Change Password</h4>
+                    <form asp-action="ChangePassword" method="post">
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-save"></i> Change Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

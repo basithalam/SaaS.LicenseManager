@@ -6,6 +6,7 @@ using SaaS.LicenseManager.Models;
 using SaaS.LicenseManager.Services;
 using Stripe.Checkout;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace SaaS.LicenseManager.Controllers
 {
@@ -38,6 +39,11 @@ namespace SaaS.LicenseManager.Controllers
                 query = query.Where(c => c.LicenseKey.Contains(searchKey));
 
             var customers = await query.ToListAsync();
+
+            ViewBag.LicenseTypes = new SelectList(Enum.GetValues(typeof(LicenseType))
+                .Cast<LicenseType>()
+                .Select(lt => new { Value = lt.ToString(), Text = lt.ToString() }), "Value", "Text");
+
             return View(customers);
         }
 
@@ -106,6 +112,35 @@ namespace SaaS.LicenseManager.Controllers
                 return NotFound();
 
             customer.LicenseEnd = newExpire;
+            await _context.SaveChangesAsync();
+
+            _emailService.SendLicenseValidityUpdateEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Update license type
+        [AdminAuthorize]
+        [HttpPost]
+        public async Task<IActionResult> UpdateLicenseType(int id, LicenseType newLicenseType)
+        {
+            var customer = await _context.Customers.FindAsync(id);
+            if (customer == null)
+                return NotFound();
+
+            customer.LicenseType = newLicenseType;
+            customer.LicenseStart = DateTime.UtcNow; // Reset start date to recalculate end date
+
+            switch (newLicenseType)
+            {
+                case LicenseType.Trial7Days:
+                    customer.LicenseEnd = customer.LicenseStart.AddDays(7); break;
+                case LicenseType.Monthly:
+                    customer.LicenseEnd = customer.LicenseStart.AddMonths(1); break;
+                case LicenseType.Yearly:
+                    customer.LicenseEnd = customer.LicenseStart.AddYears(1); break;
+            }
+
             await _context.SaveChangesAsync();
 
             _emailService.SendLicenseValidityUpdateEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd);
