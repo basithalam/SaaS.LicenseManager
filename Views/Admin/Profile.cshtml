@@ -1,5 +1,6 @@
 @model SaaS.LicenseManager.Models.AdminUser
 
+
 @{ ViewData["Title"] = "Admin Profile"; }
 
 <div class="container mt-5">
@@ -19,7 +20,12 @@
                         <p class="form-control-static">@Model.Email</p>
                     </div>
 
+                    <div>
+                        <a asp-action="AddAdmin" class="btn btn-success w-100"><i class="bi bi-person-plus"></i> Add New Admin</a>
+                    </div>
+
                     <h4 class="mb-3 text-primary"><i class="bi bi-key"></i> Change Password</h4>
+                    
                     <form asp-action="ChangePassword" method="post">
                         <div class="mb-3">
                             <label for="currentPassword" class="form-label">Current Password</label>
@@ -35,6 +41,11 @@
                         </div>
                         <button type="submit" class="btn btn-primary w-100"><i class="bi bi-save"></i> Change Password</button>
                     </form>
+
+                    <form asp-controller="Admin" asp-action="Logout" method="post" class="mt-3">
+                        <button type="submit" class="btn btn-danger w-100"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                    </form>
+                    
                 </div>
             </div>
         </div>

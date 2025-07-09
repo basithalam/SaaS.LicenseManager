@@ -109,16 +109,31 @@ namespace SaaS.LicenseManager.Controllers
             return RedirectToAction("Login");
         }
 
-        // TEMPORARY: Use this action to generate a BCrypt hash for a password.
-        // REMOVE THIS ACTION AFTER YOU HAVE UPDATED YOUR ADMIN PASSWORD IN THE DATABASE.
-        //public ContentResult HashPassword(string password)
-        //{
-        //    if (string.IsNullOrEmpty(password))
-        //    {
-        //        return Content("Please provide a password to hash.");
-        //    }
-        //    string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
-        //    return Content($"Hashed Password: {hashedPassword}");
-        //}
+        [AdminAuthorize]
+        public IActionResult AddAdmin()
+        {
+            return View();
+        }
+
+        [AdminAuthorize]
+        [HttpPost]
+        public async Task<IActionResult> AddAdmin(AdminUser adminUser)
+        {
+            if (ModelState.IsValid)
+            {
+                if (await _context.AdminUsers.AnyAsync(a => a.Username == adminUser.Username || a.Email == adminUser.Email))
+                {
+                    ModelState.AddModelError("", "Admin user with this username or email already exists.");
+                    return View(adminUser);
+                }
+
+                adminUser.Password = BCrypt.Net.BCrypt.HashPassword(adminUser.Password);
+                _context.AdminUsers.Add(adminUser);
+                await _context.SaveChangesAsync();
+                ViewBag.Success = "New admin user added successfully!";
+                return RedirectToAction("Profile");
+            }
+            return View(adminUser);
+        }
     }
 }

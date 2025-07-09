@@ -26,11 +26,11 @@
             <a class="btn btn-primary btn-lg shadow me-2" asp-action="Create">
                 <i class="bi bi-person-plus-fill me-1"></i> Add Customer
             </a>
-            <form asp-controller="Admin" asp-action="Logout" method="post" class="d-inline">
+            @* <form asp-controller="Admin" asp-action="Logout" method="post" class="d-inline">
                 <button type="submit" class="btn btn-outline-danger btn-lg shadow">
                     <i class="bi bi-box-arrow-right"></i> Logout
                 </button>
-            </form>
+            </form> *@
         </div>
     </div>
 
@@ -65,7 +65,7 @@
                     <th><i class="bi bi-check-circle"></i> Status</th>
                     <th><i class="bi bi-award"></i>Type</th>
                     <th><i class="bi bi-arrow-repeat"></i> Change Plan</th>
-                    <th><i class="bi bi-calendar-x"></i> Expire</th>
+                    <th><i class="bi bi-calendar-x"></i> Extend Date</th>
                     <th><i class="bi bi-gear"></i> Actions</th>
                 </tr>
             </thead>

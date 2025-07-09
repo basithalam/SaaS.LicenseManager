@@ -14,7 +14,7 @@ namespace SaaS.LicenseManager.Services
             _settings = options.Value;
         }
 
-        public void SendLicenseEmail(string toEmail, string licenseKey)
+        public async Task SendLicenseEmail(string toEmail, string licenseKey, string expiryDate)
         {
             using var client = new SmtpClient(_settings.SmtpServer, _settings.Port)
             {
@@ -25,13 +25,13 @@ namespace SaaS.LicenseManager.Services
             var mail = new MailMessage(_settings.SenderEmail, toEmail)
             {
                 Subject = "Your License Key",
-                Body = $"Hello User!\n\nHere is your license key:\n{licenseKey}\n\nThank you for registering!"
+                Body = $"Hello User!\n\nHere is your license key: {licenseKey}\nYour license is valid until: {expiryDate}\n\nThank you for registering!"
             };
 
-            client.Send(mail);
+            await client.SendMailAsync(mail);
         }
 
-        public void SendLicenseValidityUpdateEmail(string toEmail, string licenseKey, DateTime newExpireDate)
+        public async Task SendLicenseValidityUpdateEmail(string toEmail, string licenseKey, DateTime newExpireDate)
         {
             using var client = new SmtpClient(_settings.SmtpServer, _settings.Port)
             {
@@ -45,7 +45,7 @@ namespace SaaS.LicenseManager.Services
                 Body = $"Hello User!\n\nYour license (Key: {licenseKey}) validity has been updated.\nYour new license expiry date is: {newExpireDate.ToShortDateString()}\n\nThank you!"
             };
 
-            client.Send(mail);
+            await client.SendMailAsync(mail);
         }
     }
 }

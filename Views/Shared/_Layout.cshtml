@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SaaS.LicenseManager.styles.css" asp-append-version="true" />
+    @* Modern UI using Bootstrap 5 and jQuery *@
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="~/css/app-custom.css" asp-append-version="true" />
     <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -23,10 +28,12 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
+                        @* <ul class="navbar-nav">
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Create">Customer Create</a>
                             </li>
+                        </ul> *@
+                        <ul class="navbar-nav ms-auto">
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Profile">Admin Profile</a>
                             </li>
@@ -55,5 +62,13 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+        <script src="~/js/app-custom.js" asp-append-version="true"></script>
+        <script src="~/js/country-codes.js" asp-append-version="true"></script>
+        <script src="~/js/create-customer.js" asp-append-version="true"></script>
+        <script src="~/js/StipePaymentGateway.js" asp-append-version="true"></script>
+    }
 </body>
 </html>

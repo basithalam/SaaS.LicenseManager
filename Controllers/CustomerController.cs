@@ -4,6 +4,7 @@ using SaaS.LicenseManager.Filters;
 using SaaS.LicenseManager.Helpers;
 using SaaS.LicenseManager.Models;
 using SaaS.LicenseManager.Services;
+
 using Stripe.Checkout;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -66,7 +67,7 @@ namespace SaaS.LicenseManager.Controllers
 
                 customer.LicenseKey = LicenseKeyGenerator.GenerateKey(customer.EmailAddress);
                 customer.LicenseStart = DateTime.UtcNow;
-                _emailService.SendLicenseEmail(customer.EmailAddress, customer.LicenseKey);
+                await _emailService.SendLicenseEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd.ToShortDateString());
 
                 switch (customer.LicenseType)
                 {
@@ -114,7 +115,7 @@ namespace SaaS.LicenseManager.Controllers
             customer.LicenseEnd = newExpire;
             await _context.SaveChangesAsync();
 
-            _emailService.SendLicenseValidityUpdateEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd);
+            await _emailService.SendLicenseValidityUpdateEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd);
 
             return RedirectToAction(nameof(Index));
         }
@@ -143,7 +144,7 @@ namespace SaaS.LicenseManager.Controllers
 
             await _context.SaveChangesAsync();
 
-            _emailService.SendLicenseValidityUpdateEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd);
+            await _emailService.SendLicenseValidityUpdateEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd);
 
             return RedirectToAction(nameof(Index));
         }
@@ -165,6 +166,30 @@ namespace SaaS.LicenseManager.Controllers
             }
 
             return View(entity); // This returns the View.cshtml and passes the entity as model
+        }
+
+
+        public async Task<IActionResult> PaymentSuccess(string session_id)
+        {
+            if (string.IsNullOrEmpty(session_id) || session_id == "{CHECKOUT_SESSION_ID}")
+            {
+                ViewBag.ErrorMessage = "Could not retrieve payment details, but your payment was likely successful. Your license will be sent to your email shortly.";
+                return View("Success");
+            }
+
+            try
+            {
+                var sessionService = new SessionService();
+                var session = await sessionService.GetAsync(session_id);
+                ViewBag.CustomerEmail = session.CustomerEmail;
+            }
+            catch (Stripe.StripeException ex)
+            {
+                // Log the exception
+                ViewBag.ErrorMessage = "An error occurred while retrieving payment details. Please check your email for your license.";
+            }
+
+            return View("Success");
         }
 
 
@@ -209,7 +234,7 @@ namespace SaaS.LicenseManager.Controllers
             {
                 PaymentMethodTypes = new List<string> { "card" },
                 Mode = "payment",
-                SuccessUrl = Url.Action("Create", "Customer", new { payment = "success" }, Request.Scheme),
+                SuccessUrl = Url.Action("PaymentSuccess", "Customer", null, Request.Scheme) + "?session_id={CHECKOUT_SESSION_ID}",
                 CancelUrl = Url.Action("Create", "Customer", new { payment = "cancel" }, Request.Scheme),
                 CustomerEmail = req.Email,
                 LineItems = new List<SessionLineItemOptions>
@@ -226,6 +251,17 @@ namespace SaaS.LicenseManager.Controllers
                             }
                         },
                         Quantity = 1
+                    }
+                },
+                PaymentIntentData = new SessionPaymentIntentDataOptions
+                {
+                    Metadata = new Dictionary<string, string>
+                    {
+                        { "LicenseType", req.LicenseType },
+                        { "Email", req.Email },
+                        { "FullName", req.FullName },
+                        { "Country", req.Country },
+                        { "PhoneNumber", req.PhoneNumber }
                     }
                 }
             };
@@ -252,6 +288,9 @@ namespace SaaS.LicenseManager.Controllers
     {
         public string LicenseType { get; set; }
         public string Email { get; set; }
+        public string FullName { get; set; }
+        public string Country { get; set; }
+        public string PhoneNumber { get; set; }
     }
 
 }

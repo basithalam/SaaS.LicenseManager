@@ -63,7 +63,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     licenseType: licenseType.value,
-                    email: email
+                    email: email,
+                    fullName: document.getElementById('FullName').value,
+                    country: document.getElementById('Country').value,
+                    phoneNumber: document.getElementById('CountryCode').value + document.getElementById('PhoneNumberInput').value
                 })
             })
                 .then(res => res.json())
