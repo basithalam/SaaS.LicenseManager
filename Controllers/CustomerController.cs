@@ -85,8 +85,10 @@ namespace SaaS.LicenseManager.Controllers
                 await _context.SaveChangesAsync();
 
                 // Email logic will go here (in next step)
+                // return RedirectToAction(nameof(Create));
+                TempData["Message"] = "✅ Your Demo License has been sent to the registered email. Please check your Primary or Spam folder.";
+                return RedirectToAction(nameof(Create));
 
-                return RedirectToAction(nameof(Index));
             }
             return View(customer);
         }
