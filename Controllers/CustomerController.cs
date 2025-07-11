@@ -67,7 +67,6 @@ namespace SaaS.LicenseManager.Controllers
 
                 customer.LicenseKey = LicenseKeyGenerator.GenerateKey(customer.EmailAddress);
                 customer.LicenseStart = DateTime.UtcNow;
-                await _emailService.SendLicenseEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd.ToShortDateString());
 
                 switch (customer.LicenseType)
                 {
@@ -78,6 +77,8 @@ namespace SaaS.LicenseManager.Controllers
                     case LicenseType.Yearly:
                         customer.LicenseEnd = customer.LicenseStart.AddYears(1); break;
                 }
+
+                await _emailService.SendLicenseEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd.ToShortDateString());
 
                 customer.IsActive = true;
 

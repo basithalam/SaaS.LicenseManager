@@ -84,13 +84,19 @@ namespace SaaS.LicenseManager.Controllers
                                 var metadata = session.PaymentIntent.Metadata;
                                 _logger.LogInformation($"Metadata received: LicenseType={metadata.GetValueOrDefault("LicenseType", "N/A")}, FullName={metadata.GetValueOrDefault("FullName", "N/A")}, Country={metadata.GetValueOrDefault("Country", "N/A")}, PhoneNumber={metadata.GetValueOrDefault("PhoneNumber", "N/A")}");
 
+                                metadata.TryGetValue("FullName", out var fullName);
+                                metadata.TryGetValue("Country", out var country);
+                                metadata.TryGetValue("PhoneNumber", out var phoneNumber);
+                                metadata.TryGetValue("LicenseType", out var licenseTypeStr);
+
+
                                 var newCustomer = new SaaS.LicenseManager.Models.Customer
                                 {
                                     EmailAddress = email,
-                                    FullName = metadata["FullName"],
-                                    Country = metadata["Country"],
-                                    PhoneNumber = metadata["PhoneNumber"],
-                                    LicenseType = metadata["LicenseType"] switch
+                                    FullName = fullName ?? string.Empty,
+                                    Country = country ?? string.Empty,
+                                    PhoneNumber = phoneNumber ?? string.Empty,
+                                    LicenseType = licenseTypeStr switch
                                     {
                                         "Monthly" => LicenseType.Monthly,
                                         "Yearly" => LicenseType.Yearly,
