@@ -1,10 +1,3 @@
-নিশ্নিত 👍
-নিচে তোমার দেওয়া পয়েন্টগুলো ধরে **clean, professional English README.md** লিখে দিলাম।
-তুমি সরাসরি **README.md** ফাইলে কপি-পেস্ট করতে পারো।
-
----
-
-````md
 # Inventory Management System (ASP.NET Core)
 
 This project is an Inventory Management Web Application developed using **ASP.NET Core** following a clean architecture and best practices. The system manages products, categories, suppliers, stock, purchase orders, and sales orders with proper stock tracking and transaction history.
