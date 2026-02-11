@@ -36,6 +36,19 @@ This project is built with **ASP.NET Core MVC** and follows a clean architecture
 
 ---
 
+## 🔑 Admin Credentials & Access
+
+To manage the system, use the following admin credentials:
+
+- **Admin Login URL:** `/Admin/Login`
+- **Default Username:** `admin`
+- **Default Password:** `admin123`
+
+### 🛠️ Admin Routing
+The admin panel has a dedicated route configured in `Program.cs`:
+- **Pattern:** `Admin/{action=Dashboard}/{id?}`
+- **Primary Dashboard:** After login, you will be redirected to the Customer Management page (`/Customer/Index`).
+
 ## ⚙️ Installation & Setup
 
 1. **Clone the repository**
