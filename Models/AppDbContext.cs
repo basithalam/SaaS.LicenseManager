@@ -20,8 +20,8 @@ namespace SaaS.LicenseManager.Models
                 Id = 1,
                 Username = "admin",
                 Email = "admin@example.com",
-                // Password is 'admin123' hashed with BCrypt
-                Password = "$2a$11$qM/r6mUoI1B8zY.m6p7K.eR3H.o5v.m6p7K.eR3H.o5v.m6p7K.e" // Fixed hash for 'admin123'
+                // Password is 'admin123' hashed with a fixed salt for deterministic seeding
+                Password = BCrypt.Net.BCrypt.HashPassword("admin123", "$2a$11$abcdefghijklmnopqrstuu") 
             });
         }
     }

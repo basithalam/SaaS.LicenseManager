@@ -1,4 +1,4 @@
-﻿@model SaaS.LicenseManager.Models.AdminUser
+@model SaaS.LicenseManager.Models.AdminUser
 
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -9,6 +9,13 @@
                     <p class="mb-0 small">Enter your credentials to access the admin panel.</p>
                 </div>
                 <div class="card-body p-4">
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i> @ViewBag.Error
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
                     <form id="adminLoginForm" asp-action="Login" method="post" autocomplete="off" novalidate>
                         <div class="form-floating mb-3">
                             <input asp-for="Username" class="form-control" id="Username" placeholder="Username" required />

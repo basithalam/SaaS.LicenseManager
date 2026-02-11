@@ -20,11 +20,11 @@ namespace SaaS.LicenseManager.Controllers
         public IActionResult Login() => View();
 
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password)
+        public async Task<IActionResult> Login(AdminUser model)
         {
-            var user = await _context.AdminUsers.FirstOrDefaultAsync(a => a.Username == username);
+            var user = await _context.AdminUsers.FirstOrDefaultAsync(a => a.Username == model.Username);
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
+            if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
             {
                 ViewBag.Error = "Invalid credentials";
                 return View();
@@ -32,7 +32,7 @@ namespace SaaS.LicenseManager.Controllers
 
             HttpContext.Session.SetString(AdminSessionKey, "true");
             HttpContext.Session.SetString(AdminUsernameSessionKey, user.Username);
-            return RedirectToAction("Index", "Customer");
+            return RedirectToAction("Dashboard", "Admin");
         }
 
         [AdminAuthorize]
@@ -88,19 +88,10 @@ namespace SaaS.LicenseManager.Controllers
             return View("Profile", adminUser);
         }
 
+        [AdminAuthorize]
         public IActionResult Dashboard()
         {
-            if (HttpContext.Session.GetString(AdminSessionKey) != "true")
-                return RedirectToAction("Login");
-
-            var stats = new
-            {
-                Total = _context.Customers.Count(),
-                Active = _context.Customers.Count(c => c.IsActive),
-                Expired = _context.Customers.Count(c => c.LicenseEnd < DateTime.UtcNow)
-            };
-
-            return View(stats);
+            return RedirectToAction("Index", "Customer");
         }
 
         public IActionResult Logout()
