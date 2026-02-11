@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SaaS.LicenseManager.Filters;
 using SaaS.LicenseManager.Helpers;
@@ -78,16 +78,20 @@ namespace SaaS.LicenseManager.Controllers
                         customer.LicenseEnd = customer.LicenseStart.AddYears(1); break;
                 }
 
-                await _emailService.SendLicenseEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd.ToShortDateString());
-
                 customer.IsActive = true;
-
                 _context.Customers.Add(customer);
                 await _context.SaveChangesAsync();
 
-                // Email logic will go here (in next step)
-                // return RedirectToAction(nameof(Create));
-                TempData["Message"] = "✅ Your Demo License has been sent to the registered email. Please check your Primary or Spam folder.";
+                try
+                {
+                    await _emailService.SendLicenseEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd.ToShortDateString());
+                    TempData["Message"] = "✅ Your Demo License has been sent to the registered email. Please check your Primary or Spam folder.";
+                }
+                catch (Exception ex)
+                {
+                    TempData["Message"] = "⚠️ Customer created successfully, but there was an error sending the license email. Please check your SMTP settings.";
+                }
+
                 return RedirectToAction(nameof(Create));
 
             }
@@ -118,7 +122,14 @@ namespace SaaS.LicenseManager.Controllers
             customer.LicenseEnd = newExpire;
             await _context.SaveChangesAsync();
 
-            await _emailService.SendLicenseValidityUpdateEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd);
+            try
+            {
+                await _emailService.SendLicenseValidityUpdateEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd);
+            }
+            catch (Exception)
+            {
+                // Optionally add a warning to TempData
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -147,7 +158,14 @@ namespace SaaS.LicenseManager.Controllers
 
             await _context.SaveChangesAsync();
 
-            await _emailService.SendLicenseValidityUpdateEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd);
+            try
+            {
+                await _emailService.SendLicenseValidityUpdateEmail(customer.EmailAddress, customer.LicenseKey, customer.LicenseEnd);
+            }
+            catch (Exception)
+            {
+                // Optionally add a warning to TempData
+            }
 
             return RedirectToAction(nameof(Index));
         }
